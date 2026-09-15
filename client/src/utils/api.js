@@ -244,6 +244,8 @@ export const episodesApi = {
   update: (id, payload) => unwrap(api.put(`/episodes/${id}`, payload)),
   remove: (id) => unwrap(api.delete(`/episodes/${id}`)),
   registerPlay: (id) => api.post(`/episodes/${id}/play`).catch(() => {}),
+  getArchive: () => unwrap(api.get('/episodes/archive')),
+  setArchive: (payload) => unwrap(api.put('/episodes/archive', payload)),
 };
 
 export const mediaApi = {

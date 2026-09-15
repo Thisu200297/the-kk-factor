@@ -1,4 +1,4 @@
-const { Episode } = require('../models');
+const { Episode, Setting } = require('../models');
 const ApiError = require('../utils/ApiError');
 const asyncHandler = require('../utils/asyncHandler');
 const { uniqueSlug } = require('../utils/slugify');
@@ -6,6 +6,49 @@ const { sanitizePlain } = require('../utils/sanitize');
 const { getPagination, paginatedResponse } = require('../utils/pagination');
 
 const isObjectId = (value) => /^[0-9a-fA-F]{24}$/.test(value);
+
+/**
+ * How much of the archive the public sees.
+ *
+ * The YouTube importer takes the channel's latest fifteen, which is the right
+ * amount to HOLD: a correction, a re-ordering or a change of mind then costs
+ * nothing, because the episodes are already here. How many to SHOW is a
+ * different question, and the answer today is three — she wants the archive
+ * short while the show is young, and did not want fifteen on the page.
+ *
+ * So it is a setting rather than a constant, and it caps the view rather than
+ * the import. Deciding to show six next month is then a number in the
+ * dashboard instead of a re-import and a deploy, and nothing has been thrown
+ * away in the meantime. Newer episodes still arrive on their own; they simply
+ * take the top of a list this long.
+ *
+ * Zero means no cap. Administrators always see everything, because a cap that
+ * hid episodes from the person managing them would make the dashboard lie.
+ */
+const ARCHIVE_KEY = 'show.archive';
+const ARCHIVE_DEFAULTS = { limit: 3 };
+
+async function archiveLimit() {
+  const stored = await Setting.read(ARCHIVE_KEY);
+  const value = Number.parseInt(stored?.limit, 10);
+  if (!Number.isFinite(value) || value < 0) return ARCHIVE_DEFAULTS.limit;
+  return value;
+}
+
+/**
+ * How a cap turns into one page of a shortened archive.
+ *
+ * Pure arithmetic, exported, and tested — because the obvious version of this
+ * is wrong in a way nobody notices until a visitor clicks. Capping only the
+ * page size still reports the real total, so the pager offers a page two that
+ * the cap then answers with nothing. The total has to shrink first, and the
+ * page takes whatever is left of it.
+ */
+function clampToArchive({ total, cap, offset, limit }) {
+  const visible = cap > 0 ? Math.min(total, cap) : total;
+  const take = Math.min(limit, Math.max(0, visible - offset));
+  return { visible, take };
+}
 
 /**
  * What a listener is allowed to see.
@@ -43,14 +86,41 @@ const listEpisodes = asyncHandler(async (req, res) => {
   const { page, limit, offset } = getPagination(req.query, { defaultLimit: 12, maxLimit: 60 });
   const filter = visibleFilter(req);
 
-  const [rows, count] = await Promise.all([
-    Episode.find(filter).sort({ is_featured: -1, published_at: -1 }).skip(offset).limit(limit),
-    Episode.countDocuments(filter),
-  ]);
+  const isAdmin = req.user?.role === 'admin';
+  const cap = isAdmin ? 0 : await archiveLimit();
 
-  const data = paginatedResponse({ count, rows }, page, limit);
+  const total = await Episode.countDocuments(filter);
+  const { visible, take } = clampToArchive({ total, cap, offset, limit });
+
+  const rows = take
+    ? await Episode.find(filter)
+        .sort({ is_featured: -1, published_at: -1 })
+        .skip(offset)
+        .limit(take)
+    : [];
+
+  const data = paginatedResponse({ count: visible, rows }, page, limit);
   data.items = data.items.map((episode) => forViewer(episode, req.user));
   return res.json({ success: true, data });
+});
+
+/** GET /api/episodes/archive — how many are shown. Public, so the page knows. */
+const getArchiveSettings = asyncHandler(async (_req, res) =>
+  res.json({ success: true, data: { archive: { limit: await archiveLimit() } } })
+);
+
+/** PUT /api/episodes/archive (admin). */
+const setArchiveSettings = asyncHandler(async (req, res) => {
+  const raw = req.body?.limit;
+  const value = Number.parseInt(raw, 10);
+
+  if (!Number.isFinite(value) || value < 0 || value > 500) {
+    throw ApiError.badRequest('Give a whole number of episodes to show, or 0 for all of them.');
+  }
+
+  const archive = { limit: value };
+  await Setting.write(ARCHIVE_KEY, archive, { isPublic: true });
+  return res.json({ success: true, data: { archive } });
 });
 
 /**
@@ -175,4 +245,9 @@ module.exports = {
   updateEpisode,
   deleteEpisode,
   registerPlay,
+  getArchiveSettings,
+  setArchiveSettings,
+  ARCHIVE_KEY,
+  ARCHIVE_DEFAULTS,
+  clampToArchive,
 };

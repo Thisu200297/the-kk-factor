@@ -7,8 +7,10 @@ const { createRules, updateRules, idRule } = require('../validators/episodeValid
 
 const router = express.Router();
 
-// Before /:id, which also accepts a slug and would otherwise swallow "latest".
+// Before /:id, which also accepts a slug and would otherwise swallow these.
 router.get('/latest', optionalAuth, ctrl.latestEpisode);
+router.get('/archive', ctrl.getArchiveSettings);
+router.put('/archive', writeLimiter, requireAuth, requireAdmin, ctrl.setArchiveSettings);
 
 router.get('/', optionalAuth, ctrl.listEpisodes);
 router.get('/:id', optionalAuth, ctrl.getEpisode);

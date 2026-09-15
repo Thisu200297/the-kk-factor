@@ -41,6 +41,7 @@ export default function ShowManager() {
       <GoLive state={live.data?.live} loading={live.loading} onChanged={live.refetch} toast={toast} />
       <Schedule state={live.data?.schedule} onChanged={live.refetch} toast={toast} />
       <Reminders toast={toast} />
+      <ArchiveLength toast={toast} />
       <Archive query={episodes} toast={toast} />
     </section>
   );
@@ -470,6 +471,83 @@ function GoLive({ state, loading, onChanged, toast }) {
 }
 
 /* --------------------------------------------------------------- archive -- */
+
+/**
+ * How many episodes the site shows.
+ *
+ * The importer keeps the channel's latest fifteen; this decides how many of
+ * them a visitor sees, and it starts at three because that is what she asked
+ * for while the show is young. Holding more than is shown costs nothing and
+ * means changing her mind later is this number rather than a re-import.
+ *
+ * It is a cap on the view, so new episodes still arrive on their own and take
+ * the top of the list. Administrators are never capped — a dashboard that hid
+ * episodes from the person managing them would be lying to her.
+ */
+function ArchiveLength({ toast }) {
+  const fetchArchive = useCallback(() => episodesApi.getArchive(), []);
+  const { data, loading, refetch } = useFetch(fetchArchive);
+
+  const [value, setValue] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (data?.archive) setValue(String(data.archive.limit));
+  }, [data]);
+
+  const onSave = async () => {
+    setError(null);
+    setBusy(true);
+    try {
+      await episodesApi.setArchive({ limit: Number.parseInt(value, 10) });
+      toast.success('Saved');
+      refetch();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (loading) return <div className="card p-5"><ListSkeleton rows={1} /></div>;
+
+  const shown = Number.parseInt(value, 10);
+
+  return (
+    <div className="card p-5 md:p-6">
+      <h3 className="mb-1 text-headline-sm">How many episodes to show</h3>
+      <p className="mb-4 text-sm text-fg-muted">
+        Visitors see this many, newest first. Everything else stays here and stays yours —
+        raise this number any time and the rest reappear. Set it to <strong>0</strong> to show
+        them all.
+      </p>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <input
+          type="number"
+          min="0"
+          max="500"
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          className="input w-28"
+          aria-label="Number of episodes to show"
+        />
+        <button type="button" className="btn-primary" onClick={onSave} disabled={busy}>
+          {busy ? <Spinner size={16} /> : <Icon name="save" size={18} />}
+          Save
+        </button>
+        <span className="text-sm text-fg-muted">
+          {Number.isFinite(shown) && shown > 0
+            ? `Showing the newest ${shown}`
+            : 'Showing every episode'}
+        </span>
+      </div>
+
+      {error && <InlineError className="mt-3">{error}</InlineError>}
+    </div>
+  );
+}
 
 function Archive({ query, toast }) {
   const [editing, setEditing] = useState(null);
