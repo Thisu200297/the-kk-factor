@@ -34,7 +34,7 @@ const MINUTE = 60 * 1000;
 /** A weekly repeat, so one save covers every show. */
 const ICS_RRULE = 'RRULE:FREQ=WEEKLY';
 
-export default function NextShow({ variant = 'panel', className = '' }) {
+export default function NextShow({ variant = 'panel', layout = 'auto', className = '' }) {
   const fetcher = useCallback(() => showApi.getLive(), []);
   const { data } = useFetch(fetcher);
 
@@ -83,6 +83,15 @@ export default function NextShow({ variant = 'panel', className = '' }) {
           ? `flex flex-wrap items-center gap-x-4 gap-y-2 ${className}`
           : 'rounded-panel border border-line bg-surface-container-low p-5 md:p-6 ' +
             /*
+             * `layout="stacked"` keeps the details above the buttons however
+             * wide the window gets. The side-by-side arrangement below is
+             * measured against the viewport, not the column, so in a narrow
+             * column — the hero's, say — it would split a 400px panel into two
+             * cramped halves on a desktop. Callers that know they are narrow
+             * ask for stacked.
+             */
+            (layout === 'stacked' ? '' : 'md:flex md:items-center md:justify-between md:gap-8 ') +
+            /*
              * Two columns once there is room for them. Stacked, this panel put
              * its text and its buttons in the top-left corner of a card the
              * full width of a desktop and left the other two thirds empty,
@@ -90,7 +99,7 @@ export default function NextShow({ variant = 'panel', className = '' }) {
              * layout. The details take the left, the two actions take the
              * right, and on a phone it falls back to the stack it always was.
              */
-            `md:flex md:items-center md:justify-between md:gap-8 ${className}`
+            className
       }
       aria-label="When the show is next on"
     >
@@ -124,7 +133,14 @@ export default function NextShow({ variant = 'panel', className = '' }) {
         </p>
       </div>
 
-      <div className={inline ? '' : 'mt-5 flex flex-wrap items-start gap-2.5 md:mt-0 md:shrink-0'}>
+      <div
+        className={
+          inline
+            ? ''
+            : 'mt-5 flex flex-wrap items-start gap-2.5' +
+              (layout === 'stacked' ? '' : ' md:mt-0 md:shrink-0')
+        }
+      >
         <AddToCalendar schedule={schedule} next={next} />
         {!inline && <ReminderSignup />}
       </div>

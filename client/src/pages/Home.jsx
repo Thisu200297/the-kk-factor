@@ -11,11 +11,25 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle';
 /**
  * The KK Factor home page.
  *
- * Built to Roula's own layout — sponsors across the top, her wordmark and
- * portrait, the organisations she supports and the news feed down the right,
- * her socials, then the heritage band — with one thing added that her mockup
- * had no room for: the show. That band is the only dark part of the page, so
- * the studio reads as a different room without needing a separate site.
+ * WHAT THE PORTRAIT LEFT BEHIND. The first build followed her mockup: three
+ * columns, with a framed space in the middle reading "photograph to come".
+ * The photograph did not come, and a bordered box saying so is an apology
+ * sitting where the best thing on the page should be — so it is gone, and her
+ * picture lives on About, where there is a page to hold it.
+ *
+ * WHAT TOOK ITS PLACE. The one question a visitor actually arrives with is
+ * "when can I hear this?", so the answer occupies the space the portrait had:
+ * the next broadcast, counting down, with a calendar button. Under it, the
+ * three facts that answer the same question a different way — the night, the
+ * frequencies, and where to watch instead.
+ *
+ * WHY THE NEWS MOVED DOWN. It was a narrow column beside the hero, three
+ * headlines wide enough for four words each. Given half the page it can be
+ * read. Nothing was removed in this rearrangement; the crowded things were
+ * given room.
+ *
+ * The episode band stays the only dark part of the page, so the studio reads
+ * as a different room without needing a separate site.
  */
 
 const SOCIALS = [
@@ -41,50 +55,97 @@ export default function Home() {
       <SponsorStrip />
       <LiveBanner />
 
-      {/* Hero */}
-      <div className="container-page grid gap-10 py-10 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)_minmax(0,340px)] lg:py-12">
-        <div className="flex flex-col gap-5">
-          <Wordmark />
+      {/* ---------------------------------------------------------- hero -- */}
+      <section className="relative overflow-hidden">
+        {/*
+          * Two soft washes of colour behind the hero. They are the only
+          * decoration on the page and they are cheap: two blurred circles, no
+          * image to download, and they scale to any window because nothing
+          * about them has a fixed size that matters.
+          */}
+        <span
+          className="pointer-events-none absolute -right-32 -top-40 h-[26rem] w-[26rem] rounded-full bg-primary/12 blur-3xl"
+          aria-hidden="true"
+        />
+        <span
+          className="pointer-events-none absolute -bottom-40 -left-32 h-[26rem] w-[26rem] rounded-full bg-accent/10 blur-3xl"
+          aria-hidden="true"
+        />
 
-          <span className="h-px bg-line" />
+        <div className="container-page relative grid items-center gap-10 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-14 lg:py-16">
+          <div className="flex flex-col gap-5">
+            <Wordmark />
 
-          <div>
-            <p className="text-headline-md">Entertainer. MC. Presenter.</p>
-            <p className="text-headline-md text-primary">Voice of our community.</p>
+            <span className="h-px w-full max-w-sm bg-line" />
+
+            <div>
+              <p className="text-headline-lg">Entertainer. MC. Presenter.</p>
+              <p className="text-headline-lg text-primary">Voice of our community.</p>
+            </div>
+
+            <p className="max-w-[34ch] font-display text-xl italic leading-relaxed text-fg-muted">
+              Connecting communities through culture, media, events and advocacy.
+            </p>
+
+            <div className="mt-1 flex flex-wrap gap-2.5">
+              <Link to="/show" className="btn-primary">
+                <Icon name="play_arrow" size={18} filled />
+                Listen to the show
+              </Link>
+              <Link to="/about" className="btn-secondary">
+                About Roula
+              </Link>
+            </div>
           </div>
 
-          <p className="max-w-[300px] font-display text-lg italic leading-relaxed text-fg-muted">
-            Connecting communities through culture, media, events and advocacy.
-          </p>
-
-          <div className="flex flex-wrap gap-2.5">
-            <Link to="/show" className="btn-primary">
-              <Icon name="play_arrow" size={18} filled />
-              Listen to the show
-            </Link>
-            <Link to="/about" className="btn-secondary">
-              About Roula
-            </Link>
-          </div>
+          {/* The answer to "when can I hear this?", where the portrait was. */}
+          <NextShow layout="stacked" className="w-full shadow-soft" />
         </div>
+      </section>
 
-        <Portrait />
+      {/* ------------------------------------------------- how to listen -- */}
+      <section className="container-page pb-12" aria-label="How to listen">
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Fact
+            icon="schedule"
+            label="Every Tuesday"
+            value="7:30 – 9:30 pm"
+            note="Melbourne time"
+          />
+          <Fact
+            icon="radio"
+            label="On the radio"
+            value="RPP FM 98.7 / 98.3"
+            note="Across Melbourne"
+          />
+          <Fact
+            icon="play_arrow"
+            label="Or watch live"
+            value="YouTube"
+            note="@RoulaKrikellis"
+            href="https://www.youtube.com/@RoulaKrikellis"
+          />
+        </div>
+      </section>
 
-        <aside className="flex flex-col gap-8">
-          <OrganisationsPanel />
-          <CommunityNews limit={3} />
-        </aside>
+      {/* The episodes — the dark band, and the reason most people come. */}
+      <ShowSection limit={4} />
+
+      {/* --------------------------------------------- news and partners -- */}
+      <div className="container-page grid gap-10 py-12 lg:grid-cols-2 lg:gap-14">
+        <CommunityNews limit={4} />
+        <OrganisationsPanel />
       </div>
 
-      {/* Socials */}
-      <div className="container-page pb-9">
-        <div className="mb-5 flex items-center gap-4">
+      {/* ------------------------------------------------------- socials -- */}
+      <div className="container-page pb-12">
+        <div className="mb-6 flex items-center gap-4">
           <span className="h-px flex-1 bg-line" />
           <h2 className="text-label-md uppercase text-fg-muted">Follow the KK Factor</h2>
           <span className="h-px flex-1 bg-line" />
         </div>
 
-        <ul className="flex flex-wrap justify-center gap-x-8 gap-y-6 sm:gap-x-12">
+        <ul className="flex flex-wrap justify-center gap-x-8 gap-y-7 sm:gap-x-12">
           {SOCIALS.map((social) => (
             <li key={social.label}>
               <a
@@ -95,7 +156,8 @@ export default function Home() {
               >
                 <span
                   className={
-                    'flex h-13 w-13 items-center justify-center rounded-full border p-3.5 transition-colors duration-200 ' +
+                    'flex h-13 w-13 items-center justify-center rounded-full border p-3.5 ' +
+                    'transition-all duration-200 group-hover:-translate-y-0.5 ' +
                     (social.accent
                       ? 'border-primary text-primary'
                       : 'border-line-strong text-fg group-hover:border-primary group-hover:text-primary')
@@ -113,9 +175,9 @@ export default function Home() {
         </ul>
       </div>
 
-      {/* Heritage band */}
+      {/* The closing line, and the last thing on the page. */}
       <div className="bg-primary text-primary-fg">
-        <div className="container-page flex flex-wrap items-center justify-center gap-x-8 gap-y-1.5 py-3.5 text-center">
+        <div className="container-page flex flex-wrap items-center justify-center gap-x-8 gap-y-1.5 py-4 text-center">
           {CREED.map((line, index) => (
             <span key={line} className="flex items-center gap-8">
               {index > 0 && <span className="hidden opacity-50 sm:inline" aria-hidden="true">&bull;</span>}
@@ -124,13 +186,46 @@ export default function Home() {
           ))}
         </div>
       </div>
-
-      <div className="container-page">
-        <NextShow className="mb-8" />
-      </div>
-
-      <ShowSection limit={4} />
     </>
+  );
+}
+
+/**
+ * One of the three facts under the hero.
+ *
+ * They answer the same question the countdown does — when and where — for the
+ * reader who wants it at a glance rather than in a panel. The YouTube one is
+ * a link because it goes somewhere; the other two are not, because a card
+ * that looks pressable and is not wastes a press to find out.
+ */
+function Fact({ icon, label, value, note, href }) {
+  const inner = (
+    <>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
+        <Icon name={icon} size={20} />
+      </span>
+      <span className="min-w-0">
+        <span className="block text-label-md uppercase text-fg-muted">{label}</span>
+        <span className="mt-0.5 block truncate text-headline-sm text-fg">{value}</span>
+        <span className="block text-xs text-fg-subtle">{note}</span>
+      </span>
+    </>
+  );
+
+  const shell =
+    'flex items-center gap-3.5 rounded-card border border-line bg-surface p-4 transition duration-300 ease-apple';
+
+  if (!href) return <div className={shell}>{inner}</div>;
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${shell} hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-soft`}
+    >
+      {inner}
+    </a>
   );
 }
 
@@ -153,35 +248,6 @@ function Wordmark() {
   );
 }
 
-/**
- * The portrait slot.
- *
- * She has not sent a photograph yet, so this renders the brush-stroke field
- * from her own artwork with the mark centred — a composed placeholder rather
- * than a grey box, and one <img> away from being the real thing.
- */
-function Portrait() {
-  return (
-    <div className="relative flex min-h-[420px] items-center justify-center overflow-hidden rounded-panel border border-line bg-surface">
-      <span
-        className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-primary/15 blur-3xl"
-        aria-hidden="true"
-      />
-      <span
-        className="pointer-events-none absolute -bottom-20 -left-16 h-72 w-72 rounded-full bg-accent/12 blur-3xl"
-        aria-hidden="true"
-      />
-
-      <div className="relative flex flex-col items-center gap-3 px-8 text-center">
-        <span className="equaliser text-primary" aria-hidden="true">
-          <span /><span /><span /><span />
-        </span>
-        <p className="font-display text-2xl italic text-fg-muted">Roula Krikellis</p>
-        <p className="text-label-md uppercase text-fg-subtle">Photograph to come</p>
-      </div>
-    </div>
-  );
-}
 
 /**
  * Simple outline marks rather than the platforms' own logos — they scale, they
