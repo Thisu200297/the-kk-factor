@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 import Icon from '../components/common/Icon';
 import { Player } from '../components/Show/ShowSection';
 import NextShow from '../components/Show/NextShow';
-import Plans from '../components/Membership/Plans';
 import { ListSkeleton } from '../components/common/Loader';
 import { EmptyState, ErrorState } from '../components/common/States';
 import { useFetch } from '../hooks/useFetch';
@@ -176,7 +175,6 @@ export default function Show() {
         )}
       </section>
 
-      <Plans className="mt-14 border-t border-line pt-12" />
     </div>
   );
 }

@@ -21,7 +21,7 @@ import { membershipApi } from '../../utils/api';
  * The wording comes from a setting, so the client can change what Premium
  * includes from the dashboard without any of this being redeployed.
  */
-export default function Plans({ className = '' }) {
+export default function Plans({ className = '', compact = false }) {
   const fetcher = useCallback(() => membershipApi.get(), []);
   const { data } = useFetch(fetcher);
   const { user } = useAuth();
@@ -29,19 +29,31 @@ export default function Plans({ className = '' }) {
   const membership = data?.membership;
   if (!membership?.enabled || !membership.plans?.length) return null;
 
+  /**
+   * `compact` is for the dialog, which draws its own title bar. Repeating the
+   * heading inside it would say "Membership" twice, one line apart.
+   */
   return (
-    <section className={className} aria-labelledby="membership-heading">
-      <header className="mx-auto max-w-prose text-center">
-        <p className="text-label-md uppercase text-primary">Membership</p>
-        <h2 id="membership-heading" className="mt-2 text-headline-md">
-          {membership.heading}
-        </h2>
-        {membership.intro && (
-          <p className="mt-3 text-body-md text-fg-muted">{membership.intro}</p>
-        )}
-      </header>
+    <section className={className} aria-labelledby={compact ? undefined : 'membership-heading'}>
+      {!compact && (
+        <header className="mx-auto max-w-prose text-center">
+          <p className="text-label-md uppercase text-primary">Membership</p>
+          <h2 id="membership-heading" className="mt-2 text-headline-md">
+            {membership.heading}
+          </h2>
+          {membership.intro && (
+            <p className="mt-3 text-body-md text-fg-muted">{membership.intro}</p>
+          )}
+        </header>
+      )}
 
-      <div className="mx-auto mt-8 grid max-w-3xl gap-5 sm:grid-cols-2">
+      {compact && membership.intro && (
+        <p className="mx-auto max-w-prose text-center text-body-md text-fg-muted">
+          {membership.intro}
+        </p>
+      )}
+
+      <div className={`mx-auto grid max-w-3xl gap-5 sm:grid-cols-2 ${compact ? 'mt-6' : 'mt-8'}`}>
         {membership.plans.map((plan) => (
           <PlanCard
             key={plan.key}

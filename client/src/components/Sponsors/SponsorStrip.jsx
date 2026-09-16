@@ -75,9 +75,6 @@ import { mediaUrl } from '../../utils/constants';
 /** How fast the strip drifts, in pixels a second. Slow enough to read a logo. */
 const SPEED_PX_PER_SECOND = 42;
 
-/** Invitations to fill the remaining wall. They travel with the sponsors. */
-const EMPTY_SLOTS = 3;
-
 /** The gap between tiles, in pixels. Must match GAP_CLASS. */
 const GAP_PX = 14;
 const GAP_CLASS = 'gap-[14px]';
@@ -116,7 +113,7 @@ export default function SponsorStrip() {
   const [viewportWidth, setViewportWidth] = useState(0);
 
   const sponsors = data?.items || [];
-  const tileCount = sponsors.length + EMPTY_SLOTS;
+  const tileCount = sponsors.length;
 
   /**
    * MEASURE A TILE, NOT THE ROW.
@@ -183,6 +180,22 @@ export default function SponsorStrip() {
       setContact(sponsor);
     }
   };
+
+  /**
+   * No sponsors, no strip.
+   *
+   * There used to be three dashed "your logo here" tiles here, so the wall
+   * never looked bare. They went because they were padding: on a wall of five
+   * real sponsors they were three eighths of what was moving past, and a
+   * reader counting logos was counting placeholders. The invitation survives
+   * as the line underneath, which says the same thing without taking a seat
+   * from a business that paid for one.
+   *
+   * That leaves the empty case with nothing to draw, and an empty bordered
+   * band under a heading reading "Proudly supported by" is worse than no band
+   * at all — so the section removes itself until there is something in it.
+   */
+  if (!loading && sponsors.length === 0) return null;
 
   const copy = { sponsors, onOpen: open, measureRef: setTileNode };
 
@@ -350,15 +363,6 @@ function SponsorRow({ sponsors, onOpen, measureRef, clone = false, wrap = false 
         </button>
       ))}
 
-      {Array.from({ length: EMPTY_SLOTS }).map((_, index) => (
-        <EmptySlot
-          // eslint-disable-next-line react/no-array-index-key
-          key={index}
-          clone={clone}
-          /** Something to measure even before the client has any sponsors. */
-          innerRef={!clone && sponsors.length === 0 && index === 0 ? measureRef : undefined}
-        />
-      ))}
     </div>
   );
 }
@@ -383,22 +387,3 @@ function SponsorMark({ sponsor }) {
   );
 }
 
-function EmptySlot({ clone = false, innerRef }) {
-  return (
-    <a
-      ref={innerRef}
-      href="/contact"
-      tabIndex={clone ? -1 : undefined}
-      aria-hidden={clone || undefined}
-      className={
-        `flex ${SIZE} shrink-0 items-center justify-center rounded-lg border border-dashed ` +
-        'border-line-strong bg-primary-soft/50 text-center text-[0.625rem] font-semibold uppercase ' +
-        'tracking-[0.14em] text-fg-subtle transition-colors hover:border-primary hover:text-primary'
-      }
-    >
-      Your logo
-      <br />
-      here
-    </a>
-  );
-}

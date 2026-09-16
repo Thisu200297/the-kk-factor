@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import Icon from '../common/Icon';
 import ThemeToggle from '../common/ThemeToggle';
 import SearchBar from '../News/SearchBar';
+import SubscribeButton from '../Membership/SubscribeButton';
 import { useAuth } from '../../hooks/useAuth';
 import { SITE_NAME } from '../../utils/constants';
 import { classNames } from '../../utils/format';
@@ -102,6 +103,7 @@ export default function Navbar() {
 
           {isAuthenticated ? (
             <div className="hidden items-center gap-1.5 md:flex">
+              <SubscribeButton />
               {isAdmin && (
                 <Link to="/admin" className="btn-secondary" title="Admin dashboard">
                   <Icon name="dashboard" size={16} />
@@ -120,7 +122,8 @@ export default function Navbar() {
           ) : (
             <div className="hidden items-center gap-1.5 md:flex">
               <Link to="/login" className="btn-secondary">Sign in</Link>
-              <Link to="/register" className="btn-primary">Sign up</Link>
+              <Link to="/register" className="btn-secondary">Sign up</Link>
+              <SubscribeButton />
             </div>
           )}
 
@@ -191,10 +194,16 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <div className="grid grid-cols-2 gap-2">
-                <Link to="/login" className="btn-secondary w-full">Sign in</Link>
-                <Link to="/register" className="btn-primary w-full">Sign up</Link>
-              </div>
+              <>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link to="/login" className="btn-secondary w-full">Sign in</Link>
+                  <Link to="/register" className="btn-secondary w-full">Sign up</Link>
+                </div>
+                <SubscribeButton
+                  className="btn-primary mt-2 w-full"
+                  onNavigate={() => setMenuOpen(false)}
+                />
+              </>
             )}
           </div>
         </div>
