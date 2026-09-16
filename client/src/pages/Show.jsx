@@ -103,11 +103,17 @@ export default function Show() {
             )}
           </div>
 
-          {!isLive && episode?.description && (
-            <p className="mt-4 max-w-prose whitespace-pre-line text-sm leading-relaxed text-[rgb(167_155_178)]">
-              {episode.description}
-            </p>
-          )}
+          {/*
+            * No description under the player.
+            *
+            * YouTube descriptions are not writing, they are a dumping ground:
+            * a paragraph about the episode followed by the same six social
+            * links, a mailing address, a sponsor code and a wall of hashtags,
+            * every single time. Imported verbatim it ran longer than the page
+            * and pushed the archive below the fold to say nothing the title
+            * had not. The title and the date are the episode; anyone who
+            * wants the rest has "Watch on YouTube" right there.
+            */}
         </section>
       )}
 

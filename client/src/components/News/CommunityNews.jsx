@@ -67,7 +67,10 @@ export default function CommunityNews({ limit = 3 }) {
       )}
 
       <p className="mt-3 text-xs">
-        <Link to="/news" className="font-medium text-primary hover:underline">
+        <Link
+          to="/news"
+          className="inline-flex min-h-6 items-center font-medium text-primary hover:underline"
+        >
           All community news
         </Link>
       </p>

@@ -9,7 +9,7 @@ import { SITE_NAME } from '../../utils/constants';
 import { classNames } from '../../utils/format';
 
 /**
- * Four destinations only. Every news section — Politics, Sports, Tech,
+ * The top bar. Every news section — Politics, Sports, Tech,
  * Entertainment — lives as a tab inside /news rather than crowding the top bar.
  */
 const NAV_LINKS = [
@@ -17,7 +17,6 @@ const NAV_LINKS = [
   { to: '/show', label: 'The Show' },
   { to: '/about', label: 'About Roula' },
   { to: '/news', label: 'News' },
-  { to: '/gallery', label: 'Gallery' },
   { to: '/music', label: 'Music' },
   { to: '/contact', label: 'Contact' },
 ];
@@ -65,7 +64,18 @@ export default function Navbar() {
     >
       <div className="container-page flex h-14 items-center gap-3">
         {/* Wordmark */}
-        <Link to="/" className="flex shrink-0 items-center gap-2" aria-label={`${SITE_NAME} home`}>
+        {/*
+          * `min-h-11` on the wordmark, not for looks: it measured 23px tall,
+          * which is under the 24px WCAG asks of a target and well under what
+          * a thumb actually wants. The bar is 56px, so the extra height costs
+          * nothing visually and makes the most-pressed link on the site
+          * comfortably hittable.
+          */}
+        <Link
+          to="/"
+          className="flex min-h-11 shrink-0 items-center gap-2"
+          aria-label={`${SITE_NAME} home`}
+        >
           <span className="equaliser text-primary" aria-hidden="true">
             <span /><span /><span /><span />
           </span>

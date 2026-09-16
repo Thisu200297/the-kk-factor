@@ -37,7 +37,7 @@ export default function Contact() {
           id="partner"
           icon="label"
           title="Become a KK Factor partner"
-          body="Three sponsor spots are open across the top of every page. Tell me about your business and I will send you the details."
+          body="Your logo across the top of every page, beside the businesses already supporting the show. Tell me about yours and I will send you the details."
           action={{
             href: `mailto:${EMAIL}?subject=${encodeURIComponent('KK Factor sponsorship enquiry')}`,
             label: 'Enquire about sponsorship',

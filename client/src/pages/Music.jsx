@@ -112,7 +112,19 @@ export default function Music() {
 
           {/* Tabs + search */}
           <div className="mb-4 flex flex-wrap items-center gap-3">
-            <div className="flex rounded-full bg-surface-container-high p-1">
+            {/*
+              * The pill is allowed to scroll rather than push the page.
+              *
+              * Three tabs with an icon and roomy padding come to 313px, which
+              * is wider than a 320px phone once the page gutter is taken off —
+              * so the whole document scrolled sideways by nine pixels, which
+              * reads as a broken layout everywhere else on the page. Tighter
+              * padding below `sm` gets it to fit on ordinary phones, and the
+              * scroller catches the narrowest ones without anything being
+              * clipped or unreachable.
+              */}
+            <div className="no-scrollbar -mx-1 max-w-full overflow-x-auto px-1">
+              <div className="flex w-max rounded-full bg-surface-container-high p-1">
               {[
                 { id: 'tracks', label: 'Tracks', icon: 'queue_music' },
                 { id: 'queue', label: `Queue${queue.length ? ` (${queue.length})` : ''}`, icon: 'playlist_play' },
@@ -123,7 +135,8 @@ export default function Music() {
                   type="button"
                   onClick={() => setTab(item.id)}
                   className={classNames(
-                    'flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors',
+                    'flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5',
+                    'text-sm font-medium transition-colors sm:px-4',
                     tab === item.id ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:text-on-surface'
                   )}
                 >
@@ -131,6 +144,7 @@ export default function Music() {
                   {item.label}
                 </button>
               ))}
+              </div>
             </div>
 
             {tab === 'tracks' && !selectedPlaylist && (

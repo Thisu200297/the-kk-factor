@@ -29,7 +29,10 @@ export default function RadioWidget() {
           <span className="h-1 w-1 rounded-full bg-live animate-pulse-live" />
           On air
         </span>
-        <Link to="/radio" className="text-[0.75rem] font-medium text-primary hover:opacity-80">
+        <Link
+          to="/radio"
+          className="inline-flex min-h-6 items-center text-[0.75rem] font-medium text-primary hover:opacity-80"
+        >
           All stations
         </Link>
       </div>
