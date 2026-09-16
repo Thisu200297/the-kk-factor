@@ -72,18 +72,26 @@ export default function Home() {
           aria-hidden="true"
         />
 
-        <div className="container-page relative grid items-center gap-10 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-14 lg:py-16">
+        {/*
+          * The pair is capped and centred rather than pushed to the gutters.
+          * Left to fill the full container the two columns came to about 960px
+          * inside 1360, and the other 400 opened as a void down the middle of
+          * the page — the eye reads that as two unrelated things rather than
+          * one introduction. Capping the row brings them into conversation.
+          */}
+        <div className="container-page relative py-12 lg:py-16">
+          <div className="mx-auto grid max-w-[64rem] items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)] lg:gap-12">
           <div className="flex flex-col gap-5">
             <Wordmark />
 
-            <span className="h-px w-full max-w-sm bg-line" />
+            <span className="h-px w-full max-w-md bg-line" />
 
             <div>
               <p className="text-headline-lg">Entertainer. MC. Presenter.</p>
               <p className="text-headline-lg text-primary">Voice of our community.</p>
             </div>
 
-            <p className="max-w-[34ch] font-display text-xl italic leading-relaxed text-fg-muted">
+            <p className="max-w-[42ch] font-display text-xl italic leading-relaxed text-fg-muted">
               Connecting communities through culture, media, events and advocacy.
             </p>
 
@@ -98,8 +106,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* The answer to "when can I hear this?", where the portrait was. */}
-          <NextShow layout="stacked" className="w-full shadow-soft" />
+            {/* The answer to "when can I hear this?", where the portrait was. */}
+            <NextShow layout="stacked" className="w-full shadow-soft" />
+          </div>
         </div>
       </section>
 
