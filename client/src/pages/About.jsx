@@ -32,19 +32,29 @@ export default function About() {
       </header>
 
       <div className="mt-11 grid gap-9 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
-        <div className="relative flex min-h-[380px] items-center justify-center overflow-hidden rounded-panel border border-line bg-surface">
-          <span
-            className="pointer-events-none absolute -left-16 -top-16 h-64 w-64 rounded-full bg-primary/15 blur-3xl"
-            aria-hidden="true"
+        {/*
+          * Her photograph, at last. It replaces the "photograph to come" card
+          * that stood here through the whole build.
+          *
+          * `aspect-[3/4]` with `object-cover` rather than a free-height image:
+          * the column next to it is a stack of cards of its own height, and an
+          * image allowed to set its own height drags the grid around every
+          * time the copy changes. A fixed ratio keeps the two columns level at
+          * every width, and the crop is centred on her.
+          */}
+        <figure className="relative m-0 overflow-hidden rounded-panel border border-line bg-surface">
+          <img
+            src="/roula-krikellis.jpg"
+            alt="Roula Krikellis, creator and host of The KK Factor"
+            width="814"
+            height="1086"
+            className="aspect-[3/4] h-full w-full object-cover"
           />
-          <div className="relative flex flex-col items-center gap-3 px-8 text-center">
-            <span className="equaliser text-primary" aria-hidden="true">
-              <span /><span /><span /><span />
-            </span>
-            <p className="font-display text-2xl italic text-fg-muted">Roula Krikellis</p>
-            <p className="text-label-md uppercase text-fg-subtle">Photograph to come</p>
-          </div>
-        </div>
+          <figcaption className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/70 to-transparent px-5 pb-4 pt-10">
+            <p className="font-display text-xl italic text-white">Roula Krikellis</p>
+            <p className="text-label-md uppercase text-white/70">Creator &amp; host</p>
+          </figcaption>
+        </figure>
 
         <div className="flex flex-col gap-7">
           <div>

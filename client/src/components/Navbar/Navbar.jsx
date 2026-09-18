@@ -76,9 +76,23 @@ export default function Navbar() {
           className="flex min-h-11 shrink-0 items-center gap-2"
           aria-label={`${SITE_NAME} home`}
         >
-          <span className="equaliser text-primary" aria-hidden="true">
-            <span /><span /><span /><span />
-          </span>
+          {/*
+            * The K off her logo, not the whole lockup. The full mark is
+            * roughly 3:2, so inside a 56px bar it can only be about 36px wide
+            * and the "The KK Factor" line under it stops being readable — a
+            * logo too small to read is just a smudge. The K alone survives the
+            * size, and it is pink in both themes, so it needs no dark variant.
+            * The name stays live text beside it: selectable, translatable, and
+            * it reflows instead of squashing.
+            */}
+          <img
+            src="/kk-mark.png"
+            alt=""
+            width="357"
+            height="406"
+            className="h-6 w-auto"
+            aria-hidden="true"
+          />
           <span className="text-[0.9375rem] font-bold tracking-[-0.02em]">
             The <span className="text-primary">KK</span> Factor
           </span>

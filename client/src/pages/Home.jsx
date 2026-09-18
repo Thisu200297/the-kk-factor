@@ -245,15 +245,43 @@ function Fact({ icon, label, value, note, href }) {
  * deliberately close to the proportions of the logo in her own mockup so that
  * dropping the real file in later does not move anything around it.
  */
+/**
+ * Her actual logo, not a re-drawing of it.
+ *
+ * The first build set the mark in type because the artwork had not arrived.
+ * It has now, so the type goes: a logo a client recognises is worth more than
+ * a close approximation of one, and the approximation was never going to
+ * match the script lettering anyway.
+ *
+ * TWO FILES, NOT ONE. The mark is pink and black on transparent. Black on the
+ * dark theme is a hole in the page, so `kk-logo-dark.png` is the same artwork
+ * with the black ink knocked out to white — the reverse version every brand
+ * keeps for exactly this. `dark:` swaps them; only one is ever visible, and
+ * both are ~23KB.
+ *
+ * The heading text lives in `alt`, so the page still announces itself to a
+ * screen reader and still says something if the image fails.
+ */
 function Wordmark() {
+  const cls = 'h-auto w-[min(21rem,80vw)]';
   return (
-    <div>
-      <p className="font-display text-[7rem] font-extrabold leading-[0.82] tracking-[-0.06em] text-fg">
-        K<span className="text-primary">K</span>
-      </p>
-      <p className="-mt-4 ml-[5.5rem] font-display text-4xl italic text-primary">Rock Chic</p>
-      <p className="mt-2 text-sm font-bold tracking-[0.06em] text-accent">The KK Factor</p>
-    </div>
+    <h1>
+      <img
+        src="/kk-logo.png"
+        alt="KK Rock Chic — The KK Factor"
+        width="871"
+        height="574"
+        className={`${cls} dark:hidden`}
+      />
+      <img
+        src="/kk-logo-dark.png"
+        alt=""
+        width="871"
+        height="574"
+        className={`hidden ${cls} dark:block`}
+        aria-hidden="true"
+      />
+    </h1>
   );
 }
 
